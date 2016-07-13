@@ -21,8 +21,8 @@
 ## mvp
 - for articles on [supported news websites], identify title/other means of searching for this content elsewhere
 - using a [search engine of choice], search other [supported news websites] for similar articles, pick most relevant
-- for each relevant article, determine meta-data - title, summary, leading photo, etc...
-- display related articles in a sidebar, along with their previews (metadata)
+- (optional) for each relevant article, determine meta-data - title, summary, leading photo, etc...
+- display related articles in a sidebar, (optional) along with their previews (metadata)
 - ensure that [supported news websites] is a set of ideologically different news channels. E.g. Fox, CBC, BBC, CNN, RT are included
 
 ## mvp goals
@@ -31,6 +31,6 @@
 - user is informed that alternative points of view are available, and quick links are provided
 - hard problems are avoided. We're reduced to:
  - integrating with a search API (DDG?)
- - integrating with a page metadata service (embedly? fathom?)
+ - (optional) integrating with a page metadata service (embedly? fathom?)
  - building a simple sidebar UI
  - and putting it all into a web extension
