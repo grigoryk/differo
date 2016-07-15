@@ -2,6 +2,8 @@
 - [Chrome Extension](https://github.com/grigoryk/differo/releases/download/v0.2/differo-0.2.crx) (download, then open in chrome)
 - [Firefox 48+ Extension](https://github.com/grigoryk/differo/releases/download/v0.2/differo-0.2.xpi)
 
+![screenshot](http://i.imgur.com/I4bnDvZ.png)
+
 ## basic use cases
 - as a reader, I want to be actively aware of alternative points of view that exist for the content I'm currently reading
 - as a reader, I want to be made aware that content which I'm reading has a certain bias and belongs to a certain "content bubble"
