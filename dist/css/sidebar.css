@@ -1,0 +1,42 @@
+.differo {
+    background-color: white;
+    position: fixed;
+    right: 10px;
+    top: 10px;
+    padding: 10px;
+    z-index: 10000;
+    box-shadow: 5px 6px 26px -4px rgba(0,0,0,0.75);
+    max-height: 90%;
+    max-width: 30%;
+    overflow: scroll;
+}
+
+.differo div {
+    margin-top: 15px;
+}
+
+.differo h1, .differo h2, .differo .title a, .differo .description {
+    font-family: Arial, Helvetica, sans-serif;
+}
+.differo h1 {
+    font-size: 15pt;
+}
+
+.differo h2 {
+    font-size: 13pt;
+    font-weight: 600;
+}
+
+.differo .item-wrap {
+    margin-top: 0;
+}
+
+.differo .title a {
+    color: #0a78b9;
+    font-size: 13pt;
+}
+
+.differo .description {
+    margin-top: 5px;
+    font-size: 10pt;
+}

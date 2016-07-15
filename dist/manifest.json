@@ -1,0 +1,36 @@
+{
+    "description": "Exposing content bubbles on news sites",
+    "manifest_version": 2,
+    "name": "Differo",
+    "version": "0.1",
+    "homepage_url": "https://github.com/grigoryk/differo",
+    "icons": {
+        "48": "icons/extensionGeneric.svg"
+    },
+    "applications": {
+        "gecko": {
+            "id": "differo@grigory.ca",
+            "strict_min_version": "45.0"
+        }
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*.rt.com/*",
+                "*://*.bbc.com/*",
+                "*://*.foxnews.com/*",
+                "*://*.cbc.ca/"
+            ],
+            "js": [
+                "vendor/jquery-3.0.0.min.js",
+                "vendor/underscore-min.js",
+                "vendor/react.js",
+                "vendor/react-dom.js",
+                "js/differo.js"
+            ],
+            "css": [
+                "css/sidebar.css"
+            ]
+        }
+    ]
+}
