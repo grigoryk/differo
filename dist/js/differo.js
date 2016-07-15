@@ -21,7 +21,7 @@ let supported_sites = [
     },
     {
         name: "aljazeera",
-        label: "Aljazeera",
+        label: "Al Jazeera",
         base_url: "aljazeera.com"
     },
     {
@@ -70,30 +70,32 @@ let get_uncommon_words = function(sentence, common) {
     return uncommonArr;
 };
 
-let search_bing = function(phrase, site) {
-    let key = "eKPOvT5GHYDOL6+yKTArCsz0nWu7mq7TwO5Lc+JTxig";
-    let phrase_to_search = get_uncommon_words(phrase, popularWords).join(" ") + " site: " + site;
+let getSearchPhrase = function(phrase) {
+    return get_uncommon_words(phrase, popularWords).join(" ");
+}
 
-    console.log("Phrase: " + phrase + " -->> " + phrase_to_search);
+let search_bing = function(phraseToSearch, site) {
+    let key = "eKPOvT5GHYDOL6+yKTArCsz0nWu7mq7TwO5Lc+JTxig";
+    let sitePhrase = phraseToSearch + " site: " + site;
 
     return new Promise(
         function(resolve, reject) {
-            chrome.storage.local.get(phrase_to_search, function(cached) {
-                if (chrome.runtime.lastError || !cached.hasOwnProperty(phrase_to_search)) {
+            chrome.storage.local.get(sitePhrase, function(cached) {
+                if (chrome.runtime.lastError || !cached.hasOwnProperty(sitePhrase)) {
                     $.ajax({
-                        url: "https://api.datamarket.azure.com/Bing/search/Web?Query=" + encodeURI("'" + phrase_to_search + "'"),
+                        url: "https://api.datamarket.azure.com/Bing/search/Web?Query=" + encodeURI("'" + sitePhrase + "'"),
                         dataType: "json",
                         beforeSend: function(xhr) {
                             xhr.setRequestHeader("Authorization", "Basic " + btoa(key + ":" + key));
                         }
                     }).then(function(results) {
                         let toCache = {};
-                        toCache[phrase_to_search] = results;
-                        chrome.storage.local.set(toCache, function () {
+                        toCache[sitePhrase] = results;
+                        chrome.storage.local.set(toCache, function() {
                             if (chrome.runtime.lastError) {
                                 console.log(chrome.runtime.lastError);
                             } else {
-                                console.log("Differo: cached for " + phrase_to_search);
+                                console.log("Differo: cached for " + sitePhrase);
                             }
                         });
                         console.log('Differo: resolved from ajax', results);
@@ -102,8 +104,8 @@ let search_bing = function(phrase, site) {
                         reject();
                     });
                 } else {
-                    console.log('Differo: resolved from cache!', cached[phrase_to_search]);
-                    resolve(cached[phrase_to_search]);
+                    console.log('Differo: resolved from cache!', cached[sitePhrase]);
+                    resolve(cached[sitePhrase]);
                 }
             });
         }
@@ -182,7 +184,9 @@ let SourceItem = React.createClass({
 
 let DifferoSidebar = React.createClass({
     getInitialState: function() {
-        let state = {};
+        let state = {
+            newsVisibility: true
+        };
         this.props.supportedSites.forEach(function(site) {
             state[site.name] = [];
         });
@@ -192,7 +196,7 @@ let DifferoSidebar = React.createClass({
     componentDidMount: function() {
         let self = this;
         self.props.supportedSites.forEach(function(site) {
-            search_bing(self.props.title, site.base_url).then(function(results) {
+            search_bing(getSearchPhrase(self.props.title), site.base_url).then(function(results) {
                 let updateToState = {};
                 updateToState[site.name] = _.map(_.first(results.d.results, 3), function(res) {
                     return {
@@ -209,17 +213,26 @@ let DifferoSidebar = React.createClass({
         });
     },
 
+    toggleVisibility: function() {
+        this.setState({newsVisibility: !this.state.newsVisibility});
+    },
+
     render: function() {
         let self = this;
         let sourceList = this.props.supportedSites.map(function(site) {
             site.articles = self.state[site.name];
             return (React.createElement(SourceItem, { data: site }));
         });
+        let phraseToSearch = getSearchPhrase(self.props.title);
+        let toggleLabel = this.state.newsVisibility ? 'hide' : 'show';
+        let newsVisibilityClass = this.state.newsVisibility ? 'news' : 'news-hidden';
 
         return (
             // <div className="differo">
             //     <h1>Alternative news sources: </h1>
-            //     <div className="news">
+            //     <button onClick={this.toggleVisibility}>{toggleLabel}</button>
+            //     <span className="searchPhrase">Search phrase: {phraseToSearch}</span>
+            //     <div className="{newsVisibilityClass}">
             //         {sourceList}
             //     </div>
             // </div>
@@ -232,8 +245,19 @@ let DifferoSidebar = React.createClass({
                     "Alternative news sources: "
                 ),
                 React.createElement(
+                    "button",
+                    { onClick: this.toggleVisibility },
+                    toggleLabel
+                ),
+                React.createElement(
+                    "span",
+                    { className: "searchPhrase" },
+                    "Search phrase: ",
+                    phraseToSearch
+                ),
+                React.createElement(
                     "div",
-                    { className: "news" },
+                    { className: newsVisibilityClass },
                     sourceList
                 )
             )

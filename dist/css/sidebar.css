@@ -11,9 +11,24 @@
     overflow: scroll;
 }
 
+.differo button {
+    top: 10px;
+    position: absolute;
+    right: 10px;
+}
+
 .differo .news {
     margin-top: 15px;
     background-color: white;
+}
+
+.differo .news-hidden {
+    display: none;
+}
+
+.differo .searchPhrase {
+    line-height: 1.5;
+    color: #777;
 }
 
 .differo h1, .differo h2, .differo .title a, .differo .description {
