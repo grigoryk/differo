@@ -1,6 +1,7 @@
 ## install mvp v0.2
 - [Chrome Extension](https://github.com/grigoryk/differo/releases/download/v0.2/differo-0.2.crx) (download, then open in chrome)
 - [Firefox 48+ Extension](https://github.com/grigoryk/differo/releases/download/v0.2/differo-0.2.xpi)
+- Supported news sites: CNN, FoxNews, RT, Christian Science Monitor, Al Jazeera, CBC
 
 ![screenshot](http://i.imgur.com/I4bnDvZ.png)
 
