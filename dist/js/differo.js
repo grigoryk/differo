@@ -35,8 +35,6 @@ let meta_lookup = function(doc) {
     };
 };
 
-let stop_words = ["bbc", "news", "rt", "cnn", "new", "look", "a", "able", "about", "across", "after", "all", "almost", "also", "am", "among", "an", "and", "any", "are", "as", "at", "be", "because", "been", "but", "by", "can", "cannot", "could", "dear", "did", "do", "does", "either", "else", "ever", "every", "for", "from", "get", "got", "had", "has", "have", "he", "her", "hers", "him", "his", "how", "however", "i", "if", "in", "into", "is", "it", "its", "just", "least", "let", "like", "likely", "may", "me", "might", "most", "must", "my", "neither", "no", "nor", "not", "of", "off", "often", "on", "only", "or", "other", "our", "own", "rather", "said", "say", "says", "she", "should", "since", "so", "some", "than", "that", "the", "their", "them", "then", "there", "these", "they", "this", "tis", "to", "too", "twas", "us", "wants", "was", "we", "were", "what", "when", "where", "which", "while", "who", "whom", "why", "will", "with", "would", "yet", "you", "your", "ain't", "aren't", "can't", "could've", "couldn't", "didn't", "doesn't", "don't", "hasn't", "he'd", "he'll", "he's", "how'd", "how'll", "how's", "i'd", "i'll", "i'm", "i've", "isn't", "it's", "might've", "mightn't", "must've", "mustn't", "shan't", "she'd", "she'll", "she's", "should've", "shouldn't", "that'll", "that's", "there's", "they'd", "they'll", "they're", "they've", "wasn't", "we'd", "we'll", "we're", "weren't", "what'd", "what's", "when'd", "when'll", "when's", "where'd", "where'll", "where's", "who'd", "who'll", "who's", "why'd", "why'll", "why's", "won't", "would've", "wouldn't", "you'd", "you'll", "you're", "you've"];
-
 let get_uncommon_words = function(sentence, common) {
     var wordArr = sentence.match(/\w+/g),
         commonObj = {},
@@ -59,17 +57,42 @@ let get_uncommon_words = function(sentence, common) {
 
 let search_bing = function(phrase, site) {
     let key = "eKPOvT5GHYDOL6+yKTArCsz0nWu7mq7TwO5Lc+JTxig";
-    let phrase_to_search = get_uncommon_words(phrase, stop_words);
+    let phrase_to_search = get_uncommon_words(phrase, popularWords).join(" ") + " site: " + site;
 
-    console.log("Phrase: " + phrase + " -->> " + phrase_to_search.join(" "));
+    console.log("Phrase: " + phrase + " -->> " + phrase_to_search);
 
-    return $.ajax({
-        url: "https://api.datamarket.azure.com/Bing/search/Web?Query=" + encodeURI("'" + phrase_to_search.join(" ") + " site:" + site + "'"),
-        dataType: "json",
-        beforeSend: function(xhr) {
-            xhr.setRequestHeader("Authorization", "Basic " + btoa(key + ":" + key));
+    return new Promise(
+        function(resolve, reject) {
+            chrome.storage.local.get(phrase_to_search, function(cached) {
+                if (chrome.runtime.lastError || !cached.hasOwnProperty(phrase_to_search)) {
+                    $.ajax({
+                        url: "https://api.datamarket.azure.com/Bing/search/Web?Query=" + encodeURI("'" + phrase_to_search + "'"),
+                        dataType: "json",
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader("Authorization", "Basic " + btoa(key + ":" + key));
+                        }
+                    }).then(function(results) {
+                        let toCache = {};
+                        toCache[phrase_to_search] = results;
+                        chrome.storage.local.set(toCache, function () {
+                            if (chrome.runtime.lastError) {
+                                console.log(chrome.runtime.lastError);
+                            } else {
+                                console.log("Differo: cached for " + phrase_to_search);
+                            }
+                        });
+                        console.log('Differo: resolved from ajax', results);
+                        resolve(results);
+                    }).fail(function() {
+                        reject();
+                    });
+                } else {
+                    console.log('Differo: resolved from cache!', cached[phrase_to_search]);
+                    resolve(cached[phrase_to_search]);
+                }
+            });
         }
-    });
+    );
 };
 
 let page_meta = meta_lookup(document);
@@ -154,7 +177,7 @@ let DifferoSidebar = React.createClass({
     componentDidMount: function() {
         let self = this;
         self.props.supportedSites.forEach(function(site) {
-            search_bing(self.props.title, site.base_url).done(function(results) {
+            search_bing(self.props.title, site.base_url).then(function(results) {
                 let updateToState = {};
                 updateToState[site.name] = _.map(_.first(results.d.results, 3), function(res) {
                     return {
@@ -165,9 +188,9 @@ let DifferoSidebar = React.createClass({
                     };
                 });
                 self.setState(updateToState);
-            }).fail(function() {
+            }, function() {
                 console.log("fail get results", arguments);
-            })
+            });
         });
     },
 

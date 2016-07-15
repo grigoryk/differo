@@ -13,6 +13,7 @@
             "strict_min_version": "45.0"
         }
     },
+    "permissions": ["storage"],
     "content_scripts": [
         {
             "matches": [
@@ -26,6 +27,7 @@
                 "vendor/underscore-min.js",
                 "vendor/react.js",
                 "vendor/react-dom.js",
+                "js/popular_words.js",
                 "js/differo.js"
             ],
             "css": [
