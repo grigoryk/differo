@@ -31,7 +31,9 @@
                 "vendor/underscore-min.js",
                 "vendor/react.js",
                 "vendor/react-dom.js",
+
                 "js/popular_words.js",
+                "js/supported_sites.js",
                 "js/differo.js"
             ],
             "css": [

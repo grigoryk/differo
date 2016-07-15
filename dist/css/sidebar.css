@@ -2,7 +2,7 @@
     background-color: white;
     position: fixed;
     right: 10px;
-    top: 10px;
+    bottom: 10px;
     padding: 10px;
     z-index: 10000;
     box-shadow: 5px 6px 26px -4px rgba(0,0,0,0.75);
@@ -19,6 +19,10 @@
 
 .differo .feedback {
     display: block;
+}
+
+.differo .hide {
+    display: none;
 }
 
 .differo .feedback a {
@@ -49,11 +53,13 @@
 .differo h1 {
     font-size: 15pt;
     margin: 0;
+    font-weight: normal;
 }
 
 .differo h2 {
     font-size: 13pt;
     font-weight: 600;
+    margin: 0;
 }
 
 .differo .item-wrap {
@@ -66,6 +72,14 @@
     cursor: pointer;
 }
 
+.differo .title a:hover {
+    text-decoration: underline;
+}
+
+.differo .title span {
+    margin-right: 5px;
+}
+
 .differo .content, .differo .content div {
     margin-top: 0;
 }
@@ -73,4 +87,15 @@
 .differo .content .description {
     margin-bottom: 5px;
     font-size: 10pt;
+}
+
+.differo .content ul.articleList {
+    margin: 0;
+    padding: 0;
+    list-style-type: disc;
+}
+
+.differo .content ul.articleList li {
+    margin: 0;
+    padding: 0;
 }

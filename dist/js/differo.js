@@ -1,56 +1,26 @@
-let supported_sites = [
-    {
-        name: "bbc",
-        label: "BBC News",
-        base_url: "bbc.com"
-    },
-    {
-        name: "rt",
-        label: "RT",
-        base_url: "rt.com"
-    },
-    {
-        name: "csmonitor",
-        label: "Christian Science Monitor",
-        base_url: "csmonitor.com"
-    },
-    {
-        name: "cnn",
-        label: "CNN.com",
-        base_url: "cnn.com"
-    },
-    {
-        name: "aljazeera",
-        label: "Al Jazeera",
-        base_url: "aljazeera.com"
-    },
-    {
-        name: "fox",
-        label: "FOXNews",
-        base_url: "foxnews.com"
-    },
-    {
-        name: "cbc",
-        label: "CBC",
-        base_url: "cbc.ca"
-    }
-];
-
-let meta_lookup = function(doc) {
+let metaLookup = function(doc) {
     let title_og = doc.querySelector("meta[property='og:title']");
     let description_og = doc.querySelector("meta[property='og:description']");
     let image_og = doc.querySelector("meta[property='og:image']");
     let type_og = doc.querySelector("meta[property='og:type']");
 
+    let not_null = function(t) {
+        return t !== null ? t : {};
+    };
+
+    let c = function(t) {
+        return t.content;
+    };
+
     return {
-        title: (title_og !== null ? title_og : {}).content,
-        description: doc.querySelector("meta[property='og:description']").content,
-        image: (image_og !== null ? image_og : {}).content,
-        type: (type_og !== null ? type_og : {}).content
+        title: c(not_null(title_og)),
+        description: c(not_null(description_og)),
+        image: c(not_null(image_og)),
+        type: c(not_null(type_og))
     };
 };
 
-let get_uncommon_words = function(sentence, common) {
+let getUncommonWords = function(sentence, common) {
     var wordArr = sentence.match(/\w+/g),
         commonObj = {},
         uncommonArr = [],
@@ -71,10 +41,10 @@ let get_uncommon_words = function(sentence, common) {
 };
 
 let getSearchPhrase = function(phrase) {
-    return get_uncommon_words(phrase, popularWords).join(" ");
+    return getUncommonWords(phrase, popularWords).join(" ");
 }
 
-let search_bing = function(phraseToSearch, site) {
+let searchBing = function(phraseToSearch, site) {
     let key = "eKPOvT5GHYDOL6+yKTArCsz0nWu7mq7TwO5Lc+JTxig";
     let sitePhrase = phraseToSearch + " site: " + site;
 
@@ -112,38 +82,49 @@ let search_bing = function(phraseToSearch, site) {
     );
 };
 
-let page_meta = meta_lookup(document);
+let isArticle = function(pageMeta, url) {
+    if (pageMeta.type === "article") {
+        return true;
+    }
+
+    if (url.indexOf("aljazeera.com") !== -1) {
+        return true;
+    }
+
+    return false;
+}
+
+let pageMeta = metaLookup(document);
 
 let Article = React.createClass({
     render: function() {
         return (
             // <div>
             //     <div className="title">
-            //         <a href="{this.props.data.url}">{this.props.data.title}</a>
+            //         <span>&bull;</span><a href="{this.props.data.url}" title="{this.props.data.description}">{this.props.data.title}</a>
             //     </div>
-            //     <div className="description">{this.props.data.description}</div>
             // </div>
             React.createElement(
+            "div",
+            null,
+            React.createElement(
                 "div",
-                null,
+                { className: "title" },
                 React.createElement(
-                    "div",
-                    { className: "title" },
-                    React.createElement(
-                        "a",
-                        { href: this.props.data.url },
-                        this.props.data.title
-                    )
+                    "span",
+                    null,
+                    "•"
                 ),
                 React.createElement(
-                    "div",
-                    { className: "description" },
-                    this.props.data.description
+                    "a",
+                    { href: this.props.data.url, title: this.props.data.description },
+                    this.props.data.title
                 )
             )
+        )
         );
     }
-})
+});
 
 let SourceItem = React.createClass({
     render: function() {
@@ -195,8 +176,13 @@ let DifferoSidebar = React.createClass({
 
     componentDidMount: function() {
         let self = this;
+
+        if (!this.props.isArticle) {
+            return;
+        }
+
         self.props.supportedSites.forEach(function(site) {
-            search_bing(getSearchPhrase(self.props.title), site.base_url).then(function(results) {
+            searchBing(getSearchPhrase(self.props.title), site.base_url).then(function(results) {
                 let updateToState = {};
                 updateToState[site.name] = _.map(_.first(results.d.results, 3), function(res) {
                     return {
@@ -214,26 +200,37 @@ let DifferoSidebar = React.createClass({
     },
 
     toggleVisibility: function() {
-        this.setState({newsVisibility: !this.state.newsVisibility});
+        this.setState({ newsVisibility: !this.state.newsVisibility });
     },
 
     render: function() {
         let self = this;
-        let sourceList = this.props.supportedSites.map(function(site) {
-            site.articles = self.state[site.name];
-            return (React.createElement(SourceItem, { data: site }));
-        });
-        let phraseToSearch = getSearchPhrase(self.props.title);
+        let sourceList = [];
+        let phraseToSearch = "";
+
+        if (this.props.isArticle) {
+            sourceList = _.shuffle(this.props.supportedSites).map(function(site) {
+                site.articles = self.state[site.name];
+                return (React.createElement(SourceItem, { data: site }));
+            });
+            phraseToSearch = getSearchPhrase(this.props.title);
+        }
+
         let toggleLabel = this.state.newsVisibility ? 'hide' : 'show';
-        let newsVisibilityClass = this.state.newsVisibility ? 'news' : 'news-hidden';
+        let newsVisibilityClass = this.state.newsVisibility && this.props.isArticle ? 'news' : 'news-hidden';
 
         return (
             // <div className="differo">
-            //     <h1>Alternative news sources: </h1>
-            //     <button onClick={this.toggleVisibility}>{toggleLabel}</button>
-            //     <span className="searchPhrase">Search phrase: {phraseToSearch}</span>
-            //     <div className="{newsVisibilityClass}">
-            //         {sourceList}
+            //     <h1>Related news: </h1>
+            //     <div className="{!this.props.isArticle ? 'hide' : ''}">
+            //         <button onClick={this.toggleVisibility}>{toggleLabel}</button>
+            //         <span className="searchPhrase">Topic: {phraseToSearch}</span>
+            //         <div className="{newsVisibilityClass}">
+            //             {sourceList}
+            //         </div>
+            //     </div>
+            //     <div className="not-an-article {this.props.isArticle ? 'hide' : ''}">
+            //         <p>This is not an article page.</p>
             //     </div>
             // </div>
             React.createElement(
@@ -242,53 +239,47 @@ let DifferoSidebar = React.createClass({
                 React.createElement(
                     "h1",
                     null,
-                    "Alternative news sources: "
-                ),
-                React.createElement(
-                    "button",
-                    { onClick: this.toggleVisibility },
-                    toggleLabel
-                ),
-                React.createElement(
-                    "span",
-                    { className: "searchPhrase" },
-                    "Search phrase: ",
-                    phraseToSearch
-                ),
-                React.createElement(
-                    "a",
-                    { className: "feedback", href: "http://goo.gl/forms/mihggnFm3NpvvyON2", target: "_blank" },
-                    "Provide feedback"
+                    "Related news: "
                 ),
                 React.createElement(
                     "div",
-                    { className: newsVisibilityClass },
-                    sourceList
+                    { className: !this.props.isArticle ? 'hide' : '' },
+                    React.createElement(
+                        "button",
+                        { onClick: this.toggleVisibility },
+                        toggleLabel
+                    ),
+                    React.createElement(
+                        "span",
+                        { className: "searchPhrase" },
+                        "Topic: ",
+                        phraseToSearch
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: newsVisibilityClass },
+                        sourceList
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "not-an-article " + (this.props.isArticle ? 'hide' : '') },
+                    React.createElement(
+                        "p",
+                        null,
+                        "This is not an article page."
+                    )
                 )
             )
         );
     }
 });
 
-let isArticle = function(page_meta, url) {
-    if (page_meta.type === "article") {
-        return true;
-    }
-
-    if (url.indexOf("aljazeera.com") !== -1) {
-        return true;
-    }
-
-    return false;
-}
-
 let differoContainer = document.createElement("div");
 differoContainer.id = "differo-container";
 document.body.appendChild(differoContainer);
 
-if (isArticle(page_meta, document.location.href)) {
-    ReactDOM.render(
-        React.createElement(DifferoSidebar, { title: page_meta.title, supportedSites: supported_sites }),
-        differoContainer
-    );
-}
+ReactDOM.render(
+    React.createElement(DifferoSidebar, { title: pageMeta.title, supportedSites: supportedSites, isArticle: isArticle(pageMeta, document.location.href) }),
+    differoContainer
+);
