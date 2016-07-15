@@ -256,6 +256,11 @@ let DifferoSidebar = React.createClass({
                     phraseToSearch
                 ),
                 React.createElement(
+                    "a",
+                    { className: "feedback", href: "http://goo.gl/forms/mihggnFm3NpvvyON2", target: "_blank" },
+                    "Provide feedback"
+                ),
+                React.createElement(
                     "div",
                     { className: newsVisibilityClass },
                     sourceList

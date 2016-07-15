@@ -17,6 +17,15 @@
     right: 10px;
 }
 
+.differo .feedback {
+    display: block;
+}
+
+.differo .feedback a {
+    color: #0a78b9;
+    font-size: 11pt;
+}
+
 .differo .news {
     margin-top: 15px;
     background-color: white;
@@ -32,6 +41,7 @@
 }
 
 .differo .searchPhrase {
+    font-size: 11pt;
     line-height: 1.5;
     color: #777;
 }
