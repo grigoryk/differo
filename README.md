@@ -6,10 +6,11 @@
 ## different approaches
 - what sort of bubbles do we want to expose?
  - political leanings
-  - liberal, progressive, conservative, libertarian, ...
+   - liberal, progressive, conservative, libertarian, ...
  - social classes
  - personal interests
- - geographical; urban vs rural (does this tie in with liberal vs conservative?)
+ - geographical; urban vs rural
+   - does this tie in with liberal vs conservative?
  - etc
 - classify content which user is reading
 - classify source of content
@@ -20,7 +21,7 @@
 - identifying content bubbles is hard
 - recommendations are hard
 
-## mvp
+## mvp description
 - for articles on [supported news websites], identify title/other means of searching for this content elsewhere
 - using a [search engine of choice], search other [supported news websites] for similar articles, pick most relevant
 - (optional) for each relevant article, determine meta-data - title, summary, leading photo, etc...
@@ -28,13 +29,20 @@
 - ensure that [supported news websites] is a set of ideologically different news channels. E.g. Fox, CBC, BBC, CNN, RT are included
 
 ## mvp goals
+- validate use cases
 - provide a quick overview of news coverage of a given topic
 - summary, titles and leading photo all readily available in the sidebar might by themselves expose underlying biases and different view points
 - user is informed that alternative points of view are available, and quick links are provided
 - hard problems are avoided. We're reduced to:
  - integrating with a search API (DDG?)
-  - Bing Search API
+   - Bing Search API
  - (optional) integrating with a page metadata service (embedly? fathom?)
-  - jkerim's page-metadata-service
+   - jkerim's page-metadata-service
  - building a simple sidebar UI
  - and putting it all into a web extension
+
+## mvp success criteria
+- subjective feedback
+- recommendations are "useful"
+- users feel that they're more informed
+- users feel that they're exposed to varying points of view
