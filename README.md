@@ -1,5 +1,5 @@
 ## basic use cases
-- as a reader, I want to be actively aware of alternative points of view
+- as a reader, I want to be actively aware of alternative points of view that exist for the content I'm currently reading
 - as a reader, I want to be made aware that content which I'm reading has a certain bias and belongs to a certain "content bubble"
 - as a reader, I want to easily access content which covers alternative points of view of what I'm currently reading
 
@@ -8,10 +8,12 @@
  - political leanings
   - liberal, progressive, conservative, libertarian, ...
  - social classes
+ - personal interests
+ - geographical; urban vs rural (does this tie in with liberal vs conservative?)
  - etc
 - classify content which user is reading
 - classify source of content
-- content recommendation based on current "bubble" - find alternative view points
+- content recommendation based on current "bubble" - find similar content from other bubbles
 
 ## let's avoid hard problems initially
 - classification is hard
@@ -31,6 +33,8 @@
 - user is informed that alternative points of view are available, and quick links are provided
 - hard problems are avoided. We're reduced to:
  - integrating with a search API (DDG?)
+  - Bing Search API
  - (optional) integrating with a page metadata service (embedly? fathom?)
+  - jkerim's page-metadata-service
  - building a simple sidebar UI
  - and putting it all into a web extension
