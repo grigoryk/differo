@@ -26,15 +26,16 @@
     display: none;
 }
 
+.differo h1, .differo h2, .differo .title a, .differo .description, .differo .searchPhrase {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #333;
+}
+
 .differo .searchPhrase {
     line-height: 1.5;
     color: #777;
 }
 
-.differo h1, .differo h2, .differo .title a, .differo .description {
-    font-family: Arial, Helvetica, sans-serif;
-    color: #333;
-}
 .differo h1 {
     font-size: 15pt;
     margin: 0;
