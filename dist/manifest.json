@@ -20,7 +20,9 @@
                 "*://*.rt.com/*",
                 "*://*.bbc.com/*",
                 "*://*.foxnews.com/*",
-                "*://*.cbc.ca/"
+                "*://*.cbc.ca/*",
+                "*://*.csmonitor.com/*",
+                "*://*.aljazeera.com/*"
             ],
             "js": [
                 "vendor/jquery-3.0.0.min.js",

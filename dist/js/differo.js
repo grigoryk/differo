@@ -10,9 +10,19 @@ let supported_sites = [
         base_url: "rt.com"
     },
     {
+        name: "csmonitor",
+        label: "Christian Science Monitor",
+        base_url: "csmonitor.com"
+    },
+    {
         name: "cnn",
         label: "CNN.com",
         base_url: "cnn.com"
+    },
+    {
+        name: "aljazeera",
+        label: "Aljazeera",
+        base_url: "aljazeera.com"
     },
     {
         name: "fox",
@@ -27,11 +37,16 @@ let supported_sites = [
 ];
 
 let meta_lookup = function(doc) {
+    let title_og = doc.querySelector("meta[property='og:title']");
+    let description_og = doc.querySelector("meta[property='og:description']");
+    let image_og = doc.querySelector("meta[property='og:image']");
+    let type_og = doc.querySelector("meta[property='og:type']");
+
     return {
-        title: doc.querySelector("meta[property='og:title']").content,
+        title: (title_og !== null ? title_og : {}).content,
         description: doc.querySelector("meta[property='og:description']").content,
-        image: doc.querySelector("meta[property='og:image']").content,
-        type: doc.querySelector("meta[property='og:type']").content
+        image: (image_og !== null ? image_og : {}).content,
+        type: (type_og !== null ? type_og : {}).content
     };
 };
 
@@ -226,11 +241,23 @@ let DifferoSidebar = React.createClass({
     }
 });
 
+let isArticle = function(page_meta, url) {
+    if (page_meta.type === "article") {
+        return true;
+    }
+
+    if (url.indexOf("aljazeera.com") !== -1) {
+        return true;
+    }
+
+    return false;
+}
+
 let differoContainer = document.createElement("div");
 differoContainer.id = "differo-container";
 document.body.appendChild(differoContainer);
 
-if (page_meta.type === "article") {
+if (isArticle(page_meta, document.location.href)) {
     ReactDOM.render(
         React.createElement(DifferoSidebar, { title: page_meta.title, supportedSites: supported_sites }),
         differoContainer
