@@ -5,15 +5,17 @@
     "version": "0.1",
     "homepage_url": "https://github.com/grigoryk/differo",
     "icons": {
-        "48": "icons/extensionGeneric.svg"
+        "48": "icons/ext.png"
     },
     "applications": {
         "gecko": {
             "id": "differo@grigory.ca",
-            "strict_min_version": "45.0"
+            "strict_min_version": "48.0"
         }
     },
-    "permissions": ["storage"],
+    "permissions": [
+        "storage"
+    ],
     "content_scripts": [
         {
             "matches": [
