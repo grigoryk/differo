@@ -1,5 +1,5 @@
 {
-    "description": "Exposing content bubbles on news sites",
+    "description": "Find alternative coverage for news",
     "manifest_version": 2,
     "name": "Differo",
     "version": "0.1",
