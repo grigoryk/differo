@@ -1,3 +1,7 @@
+## install mvp version
+- [Chrome Extension](https://github.com/grigoryk/differo/releases/download/v0.1/differo-0.1.crx)
+- [Firefox 48+ Extension](https://github.com/grigoryk/differo/releases/download/v0.1/differo-0.1.xpi)
+
 ## basic use cases
 - as a reader, I want to be actively aware of alternative points of view that exist for the content I'm currently reading
 - as a reader, I want to be made aware that content which I'm reading has a certain bias and belongs to a certain "content bubble"
