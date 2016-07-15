@@ -1,6 +1,6 @@
 ## install mvp
 - [Chrome Extension on Web Store](https://chrome.google.com/webstore/detail/differo/jcbkmgbdkefheeemjgpaaghjljodclgl)
-- [Firefox 48+ Extension](https://github.com/grigoryk/differo/releases/download/v0.2/differo-0.2.xpi)
+- [Firefox 48+ Extension on Add-On Store](https://addons.mozilla.org/en-US/firefox/addon/differo/)
 - Supported news sites: CNN, FoxNews, RT, Christian Science Monitor, Al Jazeera, CBC
 
 ![screenshot](http://i.imgur.com/BNahiik.png)
