@@ -221,6 +221,7 @@ let DifferoSidebar = React.createClass({
             //     <div className="{!this.props.isArticle ? 'hide' : ''}">
             //         <button onClick={this.toggleVisibility}>{toggleLabel}</button>
             //         <span className="searchPhrase">Topic: {phraseToSearch}</span>
+            //         <a className="feedback" href="http://goo.gl/forms/sFMrVZMhCqkGvrNB2">Provide feedback</a>
             //         <div className="{newsVisibilityClass}">
             //             {sourceList}
             //         </div>
@@ -250,6 +251,11 @@ let DifferoSidebar = React.createClass({
                         { className: "searchPhrase" },
                         "Topic: ",
                         phraseToSearch
+                    ),
+                    React.createElement(
+                        "a",
+                        { className: "feedback", href: "http://goo.gl/forms/sFMrVZMhCqkGvrNB2", target: "_blank" },
+                        "Provide feedback"
                     ),
                     React.createElement(
                         "div",

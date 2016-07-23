@@ -2,7 +2,7 @@
     "description": "Find alternative coverage for news",
     "manifest_version": 2,
     "name": "Differo",
-    "version": "0.2",
+    "version": "0.3.2",
     "homepage_url": "https://github.com/grigoryk/differo",
     "icons": {
         "48": "icons/ext.png"
