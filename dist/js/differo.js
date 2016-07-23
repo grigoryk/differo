@@ -1,3 +1,5 @@
+'use strict';
+
 let metaLookup = function(doc) {
     const title_og = doc.querySelector("meta[property='og:title']");
     const description_og = doc.querySelector("meta[property='og:description']");
