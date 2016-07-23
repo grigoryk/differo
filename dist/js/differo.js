@@ -185,13 +185,12 @@ let DifferoSidebar = React.createClass({
                     return {
                         url: res.Url,
                         title: res.Title,
-                        image: "http://placekitten.com/200/200",
                         description: res.Description
                     };
                 });
                 self.setState(updateToState);
             }, function() {
-                console.log("fail get results", arguments);
+                console.log("Differo: fail get results", arguments);
             });
         });
     },
