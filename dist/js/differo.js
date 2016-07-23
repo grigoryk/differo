@@ -1,8 +1,8 @@
 let metaLookup = function(doc) {
-    let title_og = doc.querySelector("meta[property='og:title']");
-    let description_og = doc.querySelector("meta[property='og:description']");
-    let image_og = doc.querySelector("meta[property='og:image']");
-    let type_og = doc.querySelector("meta[property='og:type']");
+    const title_og = doc.querySelector("meta[property='og:title']");
+    const description_og = doc.querySelector("meta[property='og:description']");
+    const image_og = doc.querySelector("meta[property='og:image']");
+    const type_og = doc.querySelector("meta[property='og:type']");
 
     let not_null = function(t) {
         return t !== null ? t : {};
@@ -45,41 +45,38 @@ let getSearchPhrase = function(phrase) {
 }
 
 let searchBing = function(phraseToSearch, site) {
-    let key = "eKPOvT5GHYDOL6+yKTArCsz0nWu7mq7TwO5Lc+JTxig";
-    let sitePhrase = phraseToSearch + " site: " + site;
+    const key = "eKPOvT5GHYDOL6+yKTArCsz0nWu7mq7TwO5Lc+JTxig";
+    const sitePhrase = phraseToSearch + " site: " + site;
+    const baseApiUrl = "https://api.datamarket.azure.com/Bing/search/Web?Query=";
 
-    return new Promise(
-        function(resolve, reject) {
-            chrome.storage.local.get(sitePhrase, function(cached) {
-                if (chrome.runtime.lastError || !cached.hasOwnProperty(sitePhrase)) {
-                    $.ajax({
-                        url: "https://api.datamarket.azure.com/Bing/search/Web?Query=" + encodeURI("'" + sitePhrase + "'"),
-                        dataType: "json",
-                        beforeSend: function(xhr) {
-                            xhr.setRequestHeader("Authorization", "Basic " + btoa(key + ":" + key));
-                        }
-                    }).then(function(results) {
-                        let toCache = {};
-                        toCache[sitePhrase] = results;
-                        chrome.storage.local.set(toCache, function() {
-                            if (chrome.runtime.lastError) {
-                                console.log(chrome.runtime.lastError);
-                            } else {
-                                console.log("Differo: cached for " + sitePhrase);
-                            }
-                        });
-                        console.log('Differo: resolved from ajax', results);
-                        resolve(results);
-                    }).fail(function() {
-                        reject();
-                    });
-                } else {
-                    console.log('Differo: resolved from cache!', cached[sitePhrase]);
-                    resolve(cached[sitePhrase]);
+    return new Promise((resolve, reject) => {
+        storage
+        .get(sitePhrase)
+        .then((cached) => {
+            console.log('Differo: resolved from cache!', cached[sitePhrase]);
+            resolve(cached[sitePhrase]);
+        }).catch(() => {
+            $.ajax({
+                url: baseApiUrl + encodeURI("'" + sitePhrase + "'"),
+                dataType: "json",
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader("Authorization", "Basic " + btoa(key + ":" + key));
                 }
+            }).then(function(results) {
+                let toCache = {};
+                toCache[sitePhrase] = results;
+                storage.set(toCache).then(() => {
+                    console.log("Differo: cached for " + sitePhrase);
+                }).catch(() => {
+                    console.log("Differo: cache not supported");
+                });
+                console.log('Differo: resolved from ajax', results);
+                resolve(results);
+            }).fail(function() {
+                reject();
             });
-        }
-    );
+        });
+    });
 };
 
 let isArticle = function(pageMeta, url) {
@@ -93,8 +90,6 @@ let isArticle = function(pageMeta, url) {
 
     return false;
 }
-
-let pageMeta = metaLookup(document);
 
 let Article = React.createClass({
     render: function() {
@@ -275,11 +270,26 @@ let DifferoSidebar = React.createClass({
     }
 });
 
-let differoContainer = document.createElement("div");
-differoContainer.id = "differo-container";
-document.body.appendChild(differoContainer);
+let divWithId = (id) => {
+    let differoContainer = document.createElement("div");
+    differoContainer.id = id;
 
-ReactDOM.render(
-    React.createElement(DifferoSidebar, { title: pageMeta.title, supportedSites: supportedSites, isArticle: isArticle(pageMeta, document.location.href) }),
-    differoContainer
-);
+    return differoContainer;
+}
+
+let go = (doc, container, metadata) => {
+    doc.body.appendChild(container);
+    ReactDOM.render(
+        React.createElement(
+            DifferoSidebar,
+            {
+                title: metadata.title,
+                supportedSites: supportedSites,
+                isArticle: isArticle(metadata, doc.location.href)
+            }
+        ),
+        container
+    );
+}
+
+go(document, divWithId("differo-container"), metaLookup(document));

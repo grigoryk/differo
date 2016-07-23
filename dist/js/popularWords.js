@@ -1,3 +1,5 @@
+'use strict';
+
 let popularWords = [
     // domain specific...
     'bbc', 'rt', 'fox', 'cnn', 'cbc', 'news', 'al', 'jazeera',
